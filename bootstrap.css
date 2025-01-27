@@ -1,0 +1,249 @@
+* {
+    box-sizing: border-box;
+    font-family: "DM Sans";
+}
+
+
+:root {
+    --btn-bg:#FAF9FF;
+    --dash:#E6E8EB;
+    --normal-color:#fff;
+    --text-primary: #4318FF;
+    --text-secondery: #B6BBC7;
+    --secondery: #2B3674;
+    --alert-color: #624E17;
+    --alert-bg: #FDF4D1;
+    --color-star: #FF1818;
+    --bg-color: #FFFFFF;
+    --bg:#E9EDF2;
+    --border:#B2BAD0;
+    --border-bg:#FAFCFE:
+
+}
+
+body {
+    font-family: "DM Sans", sans-serif !important;
+    background-color: var(--bg);
+}
+
+h3 {
+    color: var(--secondery);
+}
+
+.form-label::after {
+    content: ' *';
+    color: var(--color-star);
+}
+.card {
+    border-radius: 25px;
+}
+.label_label::after {
+    content: ' *';
+    color: var(--color-star);
+}
+
+::placeholder {
+    color: var(--text-secondery) !important;
+
+}
+
+.text_text {
+    color: var(--secondery) !important;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.form-control {
+    color: var(--text-secondery);
+}
+
+label {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--secondery);
+}
+
+.input_upload {
+    display: none;
+}
+
+.label_upload {
+    border: 2px dashed var(--border);
+    border-radius: 25px;
+    background-color: var(--border-bg);
+}
+
+.label_upload i {
+    font-size: 25px;
+    color: var(--text-primary);
+}
+
+.label_upload h5 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.label_upload h6 {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondery);
+}
+label.form_label.label_label {
+ 
+    width: 95px;
+}
+.form-select:focus {
+    box-shadow: none;
+    border: 2px solid var(--text-primary);
+}
+
+.form-select {
+    border: 2px solid var(--text-secondery);
+    border-radius: 20px;
+    color: var(--text-secondery)
+}
+
+.form-control:focus {
+    box-shadow: none;
+    border: 2px solid var(--text-primary);
+}
+
+.form-control {
+    border: 2px solid var(--text-secondery);
+    border-radius: 20px;
+}
+
+.form-check-input {
+    border: 2px solid var(--border);
+    /* box-shadow: none; */
+    width: 22px;
+    height: 22px;
+
+}
+
+.form-check-input:checked {
+    
+    border-color: var(--text-primary);
+    box-shadow: none;
+    background-color: var(--text-primary);
+   
+
+}
+
+.alert h6 {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--alert-color);
+}
+
+.alert p {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--alert-color);
+}
+
+.form-control-color:not(:disabled):not([readonly]) {
+    width: 100%;
+    height: 55px;
+}
+
+.border_box {
+    border: 2px solid var(--text-secondery);
+    box-shadow: none;
+    width: 20px;
+    height: 20px;
+}
+
+.btn_bg {
+    /* border: 2px solid var(--text-secondery); */
+    border-radius: 20px;
+    background-color: var(--text-primary);
+    color: var(--normal-color);
+}
+.btn_outline{
+    border-radius: 20px;
+    background-color: var(--btn-bg);
+    color: var(--secondery);
+}
+
+.edit {
+    max-width: 75px;
+    font-size: 13px;
+}
+
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: var(--text-primary);
+    margin-top: -4px;
+}
+.detail{
+    width: 730px;
+}
+/* 
+@media screen and (max-width:992px) {
+
+
+    .alert.alert-warning {
+        text-align: center !important;
+
+    }
+
+    .alert h6 {
+        font-size: 18px;
+    }
+
+    .alert p {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width:768px) {
+
+    .form {
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    .card {
+        width: 100% !important;
+    }
+}
+
+@media screen and (max-width:576px) {
+
+    .form {
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    .card {
+        width: 100% !important;
+    }
+    .display_flex {
+        display: flex ;
+        margin-top: 30px;
+    }
+}
+
+@media screen and (max-width:425px) {
+
+    ::placeholder {
+        font-size: 12px;
+
+    }
+
+    .form-select {
+        font-size: 12px;
+       
+    }
+   
+    
+} */
