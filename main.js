@@ -223,76 +223,11 @@ fetchEmployees();
 
 ////-Delete-////
 
-// async function deleteEmployee(employeeId) {
-//     // Show a confirmation modal or log the ID
-//     alert(`Are you sure you want to delete employee with ID: ${employeeId}?`);
-//     document.getElementById("modal").style.display = "block"; // Ensure modal exists
-
-//     try {
-//         // Perform DELETE request
-//         const response = await fetch(`${API_BASE_URL}/${employeeId}`, {
-//             method: "DELETE",
-//             headers: {
-//                 "Content-Type": "application/json",
-//             },
-//         });
-
-//         if (response.ok) {
-//             console.log(`Employee with ID ${employeeId} deleted successfully.`);
-//             alert("Employee deleted successfully.");
-//         } else {
-//             console.error(`Failed to delete employee. Status: ${response.status}`);
-//             alert(`Failed to delete employee. Status: ${response.status}`);
-//         }
-//     } catch (error) {
-//         console.error("Error during delete operation:", error);
-//         alert("An error occurred while deleting the employee. Please try again.");
-//     } finally {
-//         // Hide the modal after the operation
-//         document.getElementById("modal").style.display = "none";
-//     }
-// }
-// let deleteEmployeeId = null;
-
-// function openmodal(employeeId) {
-//     deleteEmployeeId = employeeId;
-//     document.getElementById("modal").style.display = "block";
-// }
-// function closemodal(){
-//     deleteEmployeeId = null;
-//     document.getElementById("modal").style.display = "none";
-// }
-// async function deleteEmployee(employeeId) {
-//     console.log("Deleting employee with ID:", employeeId);
-//     if(!deleteEmployeeId) return;
-//     console.log("hello");
-//     try{
-//         const response=await fetch(`${API_BASE_URL}/${employeeId}`,{
-//             method:"DELETE",
-//             headers:{
-//                 "Content-Type":"application/json",
-//             },
-//         });
-//         if(response.ok){
-//             console.log(`Employee with ID ${employeeId} deleted successfully.`);
-//             alert("Employee deleted successfully.");
-//         }else{
-//             console.error(`Failed to delete employee. Status: ${response.status}`);
-//             alert(`Failed to delete employee. Status: ${response.status}`);
-//         }
-//     }catch(error){
-//             console.error("Error during delete operation:", error);
-//             alert("An error occurred while deleting the employee. Please try again.");
-//         }finally{
-//             closemodal();
-//         }
-    
-// }
-
 let deleteEmployeeId = null;
 
-function openModal(employeeId) {
-    deleteEmployeeId = employeeId;
+
+
+function openModal() {
     document.getElementById("modals").style.display = "block";
 }
 
@@ -300,12 +235,21 @@ function closeModal() {
     deleteEmployeeId = null;
     document.getElementById("modals").style.display = "none";
 }
-
 async function deleteEmployee(employeeId) {
-    openModal(employeeId);
-    console.log("Deleting employee with ID:", employeeId);
-    if (!deleteEmployeeId) return;
-
+     console.log("Deleting employee with ID:", employeeId);
+     try{
+         const response=await fetch(`${API_BASE_URL}/${employeeId}`)
+            if(!response.ok) throw new Error("Failed to fetch employee data.");
+            const employee=await response.json();
+            console.log("Employee data fetched:", employee);
+            deleteEmployeeId=employeeId;
+            openModal();
+     }catch(error){
+         console.error("Error fetching employee details:", error);
+         alert("Failed to fetch employee details. Please try again.");
+     }
+}
+document.getElementById("delete").onclick = async () => {
     try {
         const response = await fetch(`${API_BASE_URL}/${deleteEmployeeId}`, {
             method: "DELETE",
@@ -313,7 +257,7 @@ async function deleteEmployee(employeeId) {
                 "Content-Type": "application/json",
             },
         });
-           
+
         if (response.ok) {
             console.log(`Employee with ID ${deleteEmployeeId} deleted successfully.`);
             alert("Employee deleted successfully.");
@@ -329,22 +273,10 @@ async function deleteEmployee(employeeId) {
     }
 }
 
-// Example: Adding keyboard accessibility for modal
-// document.addEventListener("keydown", (event) => {
-//     if (event.key === "Escape") {
-//         closeModal();
-//     }
-// });
-
-
-
-
-
-
-
-
-
 ////-View-////
+
+
+// window.location.href = "index1.html"; 
 
 async function viewDetails(employeeId) {
     console.log("Viewing employee with ID:", employeeId);
@@ -360,3 +292,29 @@ async function viewDetails(employeeId) {
          }
 
 }
+
+
+///-Search-///
+
+
+function Search(){
+    input=document.getElementById("search");
+    filter=input.value.toUpperCase();
+    table=document.getElementById("tabelcreat");
+    tr=table.getElementsByTagName("tr");
+    for(var i=0;i<tr.length;i++){
+        var td=tr[i].getElementsByTagName("td")[0];
+        if(td){
+            textvalue=td.textContent || td.innerText;
+            if(textvalue.toUpperCase().indexOf(filter)>-1){
+                tr[i].style.display="";
+            }else{
+                tr[i].style.display="none";
+            }
+        }
+    }
+}
+/////---Pagination---////
+
+
+

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&" />
     <link rel="stylesheet" href="bootstrap.css">
 
+
 </head>
 <body>
 
@@ -52,7 +53,7 @@
                 </P>
             </div>
              <div class="mics">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <input class="form-control me-2" id="search"  onkeyup="Search()" type="search" placeholder="Search" aria-label="Search">
                 <i class="fas fa-search search-icon"></i>
                 <span class="material-symbols-outlined noti">
                     notifications
@@ -73,9 +74,16 @@
                       1
                     </button>
                     <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="#">Action</a></li>
-                      <li><a class="dropdown-item" href="#">Another action</a></li>
-                      <li><a class="dropdown-item" href="#">Something else here</a></li>
+                      <li><a class="dropdown-item" href="#">1</a></li>
+                      <li><a class="dropdown-item" href="#">2</a></li>
+                      <li><a class="dropdown-item" href="#">3</a></li>
+                      <li><a class="dropdown-item" href="#">4</a></li>
+                      <li><a class="dropdown-item" href="#">5</a></li>
+                      <li><a class="dropdown-item" href="#">6</a></li>
+                      <li><a class="dropdown-item" href="#">7</a></li>
+                      <li><a class="dropdown-item" href="#">8</a></li>
+                      <li><a class="dropdown-item" href="#">9</a></li>
+                      <li><a class="dropdown-item" href="#">10</a></li>
                     </ul>
                     <P>0f 10</P>
                   </div>
@@ -218,7 +226,7 @@
 
                         <div class="col-sm-6 col-6">
                             <label for="inputZip" class="form-label pb-2 m-0">Password</label>
-                            <input type="text" class="form-control p-sm-3 p-2" id="inputpassword" placeholder="enter zip/pin">
+                            <input type="password" class="form-control p-sm-3 p-2" id="inputpassword" placeholder="enter zip/pin">
                         </div>
                     </div>
                     <!-- <button  type="submit">Submit</button> --> 
@@ -250,14 +258,14 @@
                       <div class="modal-content">
                         <div class="modal-header">
                           <h5 class="modal-title">Delete Employee</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          <button onclick="closeModal()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                           <p>Are You Sure You want to delete.</p>
                         </div>
                         <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                          <button type="button" class="btn btn-danger">Delete</button>
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="closeModal()">Cancel</button>
+                          <button id="delete" type="button" class="btn btn-danger">Delete</button>
                         </div>
                       </div>
                     </div>
@@ -314,7 +322,7 @@
       
         </div>
         </div>
-            <div class="Pagina">
+            <div id="pagination" class="Pagina">
               <nav aria-label="Page navigation example">
                 <ul class="pagination">
                   <li class="page-item">
