@@ -1,30 +1,30 @@
 const API_BASE_URL = "http://localhost:3000/employees";
 
-let isEditing = false; 
-let editingEmployeeId = null; 
-
+let isEditing = false;
+let editingEmployeeId = null;
+let deleteEmployeeId = null;
 
 function openForm() {
     isEditing = false;
-    editingEmployeeId = null; 
-    document.getElementById("employeeForm").reset(); 
+    editingEmployeeId = null;
+    document.getElementById("employeeForm").reset();
     document.getElementById("formContainer").style.display = "block";
     document.getElementById("overlay").style.display = "block";
 }
 
 function closeForm() {
-    isEditing = false; 
-    editingEmployeeId = null; 
+    isEditing = false;
+    editingEmployeeId = null;
     document.getElementById("formContainer").style.display = "none";
     document.getElementById("overlay").style.display = "none";
 }
-
 
 async function fetchEmployees() {
     try {
         const response = await fetch(API_BASE_URL);
         const data = await response.json();
         renderTable(data);
+        renderPagination(data); 
     } catch (error) {
         console.error("Error fetching employees:", error);
     }
@@ -32,12 +32,13 @@ async function fetchEmployees() {
 
 function renderTable(data) {
     const tableBody = document.querySelector("#tabelcreat tbody");
-    // tableBody.innerHTML = ""; 
+    tableBody.innerHTML = ""; // Clear existing rows
+
     data.forEach((employee, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
             <th scope="row">${index + 1}</th>
-            <td>${employee.salutation} ${employee.firstName} ${employee.lastName}</td>
+            <td><img src="${employee.avatar}" alt="avatar" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%"> ${employee.salutation} ${employee.firstName} ${employee.lastName} </td>
             <td>${employee.email}</td>
             <td>${employee.phone}</td>
             <td>${employee.dob}</td>
@@ -48,14 +49,13 @@ function renderTable(data) {
             <td>${employee.state}</td>
             <td>${employee.country}</td>
             <td>${employee.username}</td>
-            <td>${employee.password}</td>
             <td>
                 <div class="dropdown">
-                    <button class="btn btn-secondary" type="button" data-bs-toggle="dropdown">
+                    <button class="btn btn-secondar" type="button" data-bs-toggle="dropdown">
                         <span class="colo">...</span>
                     </button>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="index1.html" onclick="viewDetails('${employee.id}')">View Details</a></li>
+                        <li><a class="dropdown-item" href="index1.html?employeeId=${employee.id}" onclick="viewDetails('${employee.id}')">View Details</a></li>
                         <li><a class="dropdown-item" href="#" onclick="editEmployee('${employee.id}')">Edit</a></li>
                         <li><a class="dropdown-item" href="#" onclick="deleteEmployee('${employee.id}')">Delete</a></li>
                     </ul>
@@ -66,17 +66,13 @@ function renderTable(data) {
     });
 }
 
-//////-edit-/////
 async function editEmployee(employeeId) {
     console.log("Editing employee with ID:", employeeId);
-
     try {
         const response = await fetch(`${API_BASE_URL}/${employeeId}`);
         if (!response.ok) throw new Error("Failed to fetch employee data.");
-
         const employee = await response.json();
         console.log("Employee data fetched:", employee);
-
         populateForm(employee, employeeId);
     } catch (error) {
         console.error("Error fetching employee details:", error);
@@ -102,22 +98,16 @@ function populateForm(employee, employeeId) {
     document.getElementById("inputusername").value = employee.username || "";
     document.getElementById("inputpassword").value = employee.password || "";
 
-    
     isEditing = true;
     editingEmployeeId = employeeId;
-
-    
     document.getElementById("formContainer").style.display = "block";
     document.getElementById("overlay").style.display = "block";
 }
 
-
 document.getElementById("submit").onclick = async (e) => {
     e.preventDefault();
-
     const formData = getFormData();
     const errors = validateForm(formData);
-
     if (errors.length) {
         alert(errors.join("\n"));
         return;
@@ -126,16 +116,12 @@ document.getElementById("submit").onclick = async (e) => {
     try {
         let response;
         if (isEditing) {
-           /////-put-/////
-            console.log("Updating employee:", formData);
             response = await fetch(`${API_BASE_URL}/${editingEmployeeId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
         } else {
-            ////-post////
-            console.log(formData);
             response = await fetch(API_BASE_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -147,8 +133,8 @@ document.getElementById("submit").onclick = async (e) => {
             throw new Error(`Failed to ${isEditing ? "update" : "add"} employee.`);
         }
 
-        alert(`Employee ${isEditing ? "updated" : "added"} successfully!`);
-        fetchEmployees(); 
+        console.log(`Employee ${isEditing ? "updated" : "added"} successfully!`);
+        fetchEmployees();
         closeForm();
     } catch (error) {
         console.error(`Error ${isEditing ? "updating" : "adding"} employee:`, error);
@@ -156,7 +142,6 @@ document.getElementById("submit").onclick = async (e) => {
     }
 };
 
-// Utility Functions
 function getFormData() {
     return {
         salutation: document.getElementById("inputSalutaion").value,
@@ -215,17 +200,9 @@ function convertToDDMMYYYY(date) {
     return `${day}-${month}-${year}`;
 }
 
-
 fetchEmployees();
 
-
-
-
-////-Delete-////
-
-let deleteEmployeeId = null;
-
-
+// Delete function
 
 function openModal() {
     document.getElementById("modals").style.display = "block";
@@ -235,35 +212,26 @@ function closeModal() {
     deleteEmployeeId = null;
     document.getElementById("modals").style.display = "none";
 }
+
 async function deleteEmployee(employeeId) {
-     console.log("Deleting employee with ID:", employeeId);
-     try{
-         const response=await fetch(`${API_BASE_URL}/${employeeId}`)
-            if(!response.ok) throw new Error("Failed to fetch employee data.");
-            const employee=await response.json();
-            console.log("Employee data fetched:", employee);
-            deleteEmployeeId=employeeId;
-            openModal();
-     }catch(error){
-         console.error("Error fetching employee details:", error);
-         alert("Failed to fetch employee details. Please try again.");
-     }
+    console.log("Preparing to delete employee with ID:", employeeId);
+    deleteEmployeeId = employeeId;
+    openModal(); 
 }
+
 document.getElementById("delete").onclick = async () => {
     try {
         const response = await fetch(`${API_BASE_URL}/${deleteEmployeeId}`, {
             method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
         });
 
         if (response.ok) {
             console.log(`Employee with ID ${deleteEmployeeId} deleted successfully.`);
             alert("Employee deleted successfully.");
+            fetchEmployees();
         } else {
-            console.error(`Failed to delete employee. Status: ${response.status}`);
-            alert(`Failed to delete employee. Status: ${response.status}`);
+            alert("Failed to delete employee. Please try again.");
         }
     } catch (error) {
         console.error("Error during delete operation:", error);
@@ -271,30 +239,10 @@ document.getElementById("delete").onclick = async () => {
     } finally {
         closeModal();
     }
-}
-
-////-View-////
+};
 
 
-// window.location.href = "index1.html"; 
-
-async function viewDetails(employeeId) {
-    console.log("Viewing employee with ID:", employeeId);
-    
-       try{
-          const response=await fetch (`${API_BASE_URL}/${employeeId}`);
-            if(!response.ok) throw new Error("Failed to fetch employee data.");
-          const employee=await response.json();
-            alert(employee);
-          }catch(error){
-           console.error("Error fetching employee details:", error);
-           alert("Failed to fetch employee details. Please try again.");
-         }
-
-}
-
-
-///-Search-///
+/////-search-////
 
 
 function Search(){
@@ -314,7 +262,78 @@ function Search(){
         }
     }
 }
-/////---Pagination---////
 
 
 
+// Pagination
+
+let rowsPerPage = 5; // Default rows per page
+const rowButton = document.getElementById("row");
+const dropdownItems = document.querySelectorAll(".dropdown-item");
+
+dropdownItems.forEach(item => {
+    item.addEventListener("click", function (e) {
+        e.preventDefault();
+        rowsPerPage = parseInt(this.textContent, 10);
+        rowButton.textContent = this.textContent; 
+        renderPagination(data); 
+    });
+});
+
+function renderPagination(data) {
+    const pagination = document.querySelector(".pagination");
+    pagination.innerHTML = "";
+    const totalPages = Math.ceil(data.length / rowsPerPage);
+
+    if (totalPages === 0) return; 
+
+    let paginationHTML = "";
+    for (let i = 1; i <= totalPages; i++) {
+        paginationHTML += `<li class="page-item">
+            <a href="#" class="page-link ${i === 1 ? "active" : ""}" data-page="${i}">${i}</a>
+        </li>`;
+    }
+    pagination.innerHTML = paginationHTML;
+
+   
+    renderTable(data.slice(0, rowsPerPage));
+
+    pagination.addEventListener("click", (e) => {
+        if (e.target.classList.contains("page-link")) {
+            e.preventDefault();
+            document.querySelectorAll(".page-link").forEach(link => link.classList.remove("active"));
+            e.target.classList.add("active");
+
+            const pageNumber = parseInt(e.target.getAttribute("data-page"), 10);
+            renderTable(data.slice((pageNumber - 1) * rowsPerPage, pageNumber * rowsPerPage));
+        }
+    });
+    document.getElementById(display).innerHTML="20";
+}
+
+async function uploadimage(e,employeeId) {
+    e.preventDefault();
+    const fileinput=document.getElementById("input_img");
+    const file=fileinput.file[0];
+    if(!file){
+        alert("please upload a file");
+        return;
+    }
+    const formData=new formData();
+    formData.append(file);
+    try{
+        const response=await fetch(`${API_BASE_URL}/${employeeId}/avatars`,{
+             method:"POST",
+             headers:{
+                "content-type":"application/json"
+             },
+             body:formData
+        })
+        const data=response.json();
+        console.log("upload success fully",data);
+    }catch{
+        console.error(error);
+        alert("fail to fetch file"); 
+    }
+    document.getElementById("submit").addEventListener("click",uploadimage);
+}

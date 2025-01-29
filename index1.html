@@ -65,8 +65,9 @@
           </div>
 <!-- fill -->
     
-
-<div class="Medium_Profile">
+<div class="employeeconatiner" id="employeeconatiner">
+    <div id="error"></div>
+<div id="md" class="Medium_Profile">
     <div class="background">
        <img src="image/Background Image.png" alt="background">
     </div>
@@ -74,52 +75,52 @@
        <img class="photo" src="image/4.png" alt="avatar">
     </div>
     <div class="name">
-       <h2>Mr. Michael Johnson</h2>
-       <p>michaeljohnson@example.com</p>
+       <h2 id="name">Mr. Michael Johnson</h2>
+       <p id="mail">michaeljohnson@example.com</p>
     </div>
     <div class="group">
        <div class="group1">
        <div class="gender">
            <p>Gender</p>
-           <h6>Male</h6>
+           <h6 id="gender">Male</h6>
     </div>
     <div class="age">
        <p>Age</p>
-       <h6>25</h6>
+       <h6 id="age">25</h6>
     </div>
     <div class="dob">
        <p>Date of Birth</p>
-       <h6>12/12/1995</h6>
+       <h6 id="dob">12/12/1995</h6>
     </div>
        </div>
 <div class="group2">
    <div class="phone">
        <p>Phone</p>
-       <h6>1234567890</h6>
+       <h6 id="phone">1234567890</h6>
    </div>
        <div class="qualification">
            <p>Qualification</p>
-           <h6>Graduate</h6>
+           <h6 id="Qulification">Graduate</h6>
        </div>
    </div>
 
 <div class="group3">
 <div class="address">
    <p>Address</p>
-   <h6>123, XYZ Street, ABC City, PQR State, 123456</h6>
+   <h6 id="address">123, XYZ Street, ABC City, PQR State, 123456</h6>
    </div>
    <div class="username">
        <p>Username</p>
-       <h6>johnsonmichael</h6>
+       <h6 id="username">johnsonmichael</h6>
    </div>
 </div>
 <div class="footer">
-   <button class="delete"  onclick="deleteEmployee">Delete</button>
+   <button class="delete"  id="delete">Delete</button>
    <button class="edited" onclick="editEmployee">Edit Details</button>
 </div>
 
    </div>
-
+</div>
 
           <!-- </div> -->
             </div>   
@@ -135,7 +136,7 @@
 
 
 
-    <!-- <script src="main.js"></script> -->
+    <script src="view.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
     crossorigin="anonymous"></script>
