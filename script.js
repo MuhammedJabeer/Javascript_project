@@ -43,12 +43,7 @@ function renderTable(data) {
             <td>${employee.phone}</td>
             <td>${employee.dob}</td>
             <td>${employee.gender}</td>
-            <td>${employee.qualifications}</td>
-            <td>${employee.address}</td>
-            <td>${employee.city}</td>
-            <td>${employee.state}</td>
             <td>${employee.country}</td>
-            <td>${employee.username}</td>
             <td>
                 <div class="dropdown">
                     <button class="btn btn-secondar" type="button" data-bs-toggle="dropdown">
@@ -131,6 +126,7 @@ document.getElementById("submit").onclick = async (e) => {
 
         if (!response.ok) {
             throw new Error(`Failed to ${isEditing ? "update" : "add"} employee.`);
+            
         }
 
         console.log(`Employee ${isEditing ? "updated" : "added"} successfully!`);

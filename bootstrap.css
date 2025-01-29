@@ -185,6 +185,9 @@ input[type=range]::-webkit-slider-thumb {
 .detail{
     width: 730px;
 }
+.add{
+   margin-left: 540px;
+}
 /* 
 @media screen and (max-width:992px) {
 
