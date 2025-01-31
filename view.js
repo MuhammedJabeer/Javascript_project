@@ -52,7 +52,7 @@
     </div>
     <div class="age">
        <p>Age</p>
-       <h6 id="age">${calculateAge('01-12-2003')}</h6>
+       <h6 id="age">${calculateAge(dob)}</h6>
     </div>
     <div class="dob">
        <p>Date of Birth</p>
@@ -102,35 +102,84 @@
       return age;
     }
 
- async  function deleteEmployee(employeeId){
-        try{
-            const response= await fetch(`${API_BASE_URL}/${employeeId}`, {
+//  async  function deleteEmployee(employeeId){
+//         try{
+//             const response= await fetch(`${API_BASE_URL}/${employeeId}`, {
+//                method: "DELETE",
+//                headers: { "Content-Type": "application/json" },
+//            });
+//              if(response.ok){
+//               localStorage.setItem('del','Are you sure you want to do this?')
+//                console.log("deleted succeccfully");
+//                document.getElementById("error").innerHTML = "Deleted successfully.";
+               
+//              }else{
+//                    alert("error");
+//              }
+//         }catch(error){
+//            console.error(error);
+//         }
+//     }
+
+//    if(localStorage.getItem('del')){
+//       swal("Are you sure you want to do this?", {
+//          buttons: ["Oh noez!", "Aww yiss!"],
+//        });
+       
+//    }
+
+
+async function deleteEmployee(employeeId) {
+   try {
+       const result = await Swal.fire({
+           title: "Are you sure?",
+           text: "This action cannot be undone!",
+           icon: "warning",
+           showCancelButton: true,
+           confirmButtonText: "Yes, delete it!",
+           cancelButtonText: "No, cancel!",
+       });
+
+       if (result.isConfirmed) {
+           const response = await fetch(`${API_BASE_URL}/${employeeId}`, {
                method: "DELETE",
                headers: { "Content-Type": "application/json" },
            });
-             if(response.ok){
-               console.log("deleted succeccfully");
+
+           if (response.ok) {
+               console.log("Deleted successfully");
                document.getElementById("error").innerHTML = "Deleted successfully.";
-               
-             }else{
-                   alert("error");
-             }
-        }catch(error){
-           console.error(error);
-        }
-    }
+               Swal.fire("Deleted!", "The employee record has been removed.", "success");
+           } else {
+               Swal.fire("Error", "Failed to delete employee.", "error");
+           }
+       } else {
+           console.log("Deletion cancelled.");
+       }
+   } catch (error) {
+       console.error(error);
+       Swal.fire("Error", "An unexpected error occurred.", "error");
+   }
+}
 
-   
 
-   function editEmployee() {
 
-      alert("go back to dashboard edit the employee");
-      const urlParams = new URLSearchParams(window.location.search);
-      const employeeId = urlParams.get('employeeId');
-    
-      window.location.href = `index.html?employeeId=${employeeId}`;
-      console.log(employeeId);
-  }
+function editEmployee() {
+   const urlParams = new URLSearchParams(window.location.search);
+   const employeeId = urlParams.get('employeeId');
+
+   if (!employeeId) {
+       alert("No Employee ID found!");
+       return;
+   }
+
+
+   console.log("Editing Employee ID:", employeeId);
+
+   // Redirect to index.html with employeeId as a query param
+   window.location.href = `index.html?employeeId=${employeeId}`;
+}
+
 
 
 

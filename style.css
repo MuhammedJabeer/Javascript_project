@@ -6,7 +6,7 @@
 body {
   background-color: #E9EDF2;
 }
-.container{
+.containers{
     padding: 0;
     margin: 0;
     width: 100%;
@@ -56,6 +56,12 @@ body {
 .page{
     padding: 30px 30px;
     line-height: 50px;
+}
+.page :hover{
+  color: white;
+  background-color:#FFFFFF21;
+  border-radius: 15px;
+  /* padding: 10px; */
 }
 .end{
    justify-content: center;
@@ -172,6 +178,7 @@ body {
     /* align-items: center; */
     color: #FFFFFF;
   }
+  
   /* .table{
     position: absolute;
     top: 30px;
@@ -199,7 +206,7 @@ body {
   #formContainer {
     display: none;
    position: absolute;
-  top: 480px;
+  top: 215px;
   left: 500px;
   transform: translate(-50%, -50%);
   background-color: #fff;
@@ -208,6 +215,8 @@ body {
   border-radius: 8px;
   width: 800px;
   z-index: 1000;
+  max-height: 105vh; /* Keep it within bounds */
+  overflow-y: auto;
   } 
   
   #overlay {
@@ -253,4 +262,10 @@ body {
   .modal-footer{
     gap: 12px;
   }
-  
+  .error {
+    color: red;
+    font-size: 14px;
+}
+.uploadimage{
+  width: 150px;
+}

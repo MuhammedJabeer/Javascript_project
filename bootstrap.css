@@ -28,6 +28,8 @@ body {
 
 h3 {
     color: var(--secondery);
+    font-weight: 700;
+    font-size: 40px;
 }
 
 .form-label::after {
@@ -53,9 +55,9 @@ h3 {
     font-size: 14px;
 }
 
-.form-control {
+/* .form-control {
     color: var(--text-secondery);
-}
+} */
 
 label {
     font-size: 15px;
@@ -101,7 +103,7 @@ label.form_label.label_label {
 .form-select {
     border: 2px solid var(--text-secondery);
     border-radius: 20px;
-    color: var(--text-secondery)
+    /* color: var(--text-secondery) */
 }
 
 .form-control:focus {
@@ -186,7 +188,7 @@ input[type=range]::-webkit-slider-thumb {
     width: 730px;
 }
 .add{
-   margin-left: 540px;
+   margin-left: 510px;
 }
 /* 
 @media screen and (max-width:992px) {

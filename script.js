@@ -1,3 +1,5 @@
+
+
 const API_BASE_URL = "http://localhost:3000/employees";
 
 let isEditing = false;
@@ -8,6 +10,7 @@ function openForm() {
     isEditing = false;
     editingEmployeeId = null;
     document.getElementById("employeeForm").reset();
+    // document.getElementById("uploadimage").reset();
     document.getElementById("formContainer").style.display = "block";
     document.getElementById("overlay").style.display = "block";
 }
@@ -19,26 +22,66 @@ function closeForm() {
     document.getElementById("overlay").style.display = "none";
 }
 
+let employeesData = []; // Store fetched data globally
+let rowsPerPage = 5; // Default rows per page
+
+document.addEventListener("DOMContentLoaded", async () => {
+    await fetchEmployees();
+});
+
 async function fetchEmployees() {
     try {
         const response = await fetch(API_BASE_URL);
-        const data = await response.json();
-        renderTable(data);
-        renderPagination(data); 
+        employeesData = await response.json(); // Store in global variable
+        renderPagination();
     } catch (error) {
         console.error("Error fetching employees:", error);
     }
 }
 
-function renderTable(data) {
-    const tableBody = document.querySelector("#tabelcreat tbody");
-    tableBody.innerHTML = ""; // Clear existing rows
+function renderPagination() {
+    const pagination = document.querySelector(".pagination");
+    pagination.innerHTML = "";
+    const totalPages = Math.ceil(employeesData.length / rowsPerPage);
+    if (totalPages === 0) return;
 
-    data.forEach((employee, index) => {
+    let paginationHTML = "";
+    for (let i = 1; i <= totalPages; i++) {
+        paginationHTML += `<li class="page-item">
+            <a href="#" class="page-link ${i === 1 ? "active" : ""}" data-page="${i}">${i}</a>
+        </li>`;
+    }
+    pagination.innerHTML = paginationHTML;
+    document.getElementById("display").innerHTML=Math.ceil(employeesData.length/rowsPerPage);
+    // Automatically load the first page
+    renderTable(1);
+
+    // Add event listeners to pagination links
+    document.querySelectorAll(".page-link").forEach(link => {
+        link.addEventListener("click", (e) => {
+            e.preventDefault();
+            document.querySelectorAll(".page-link").forEach(link => link.classList.remove("active"));
+            e.target.classList.add("active");
+
+            const pageNumber = parseInt(e.target.getAttribute("data-page"), 10);
+            renderTable(pageNumber);
+        });
+    });
+}
+
+function renderTable(pageNumber) {
+    const tableBody = document.querySelector("#tabelcreat tbody");
+    tableBody.innerHTML = "";
+
+    const start = (pageNumber - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    const pageData = employeesData.slice(start, end);
+
+    pageData.forEach((employee, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <th scope="row">${index + 1}</th>
-            <td><img src="${employee.avatar}" alt="avatar" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%"> ${employee.salutation} ${employee.firstName} ${employee.lastName} </td>
+            <th scope="row">${start + index + 1}</th>
+          <td><img src="${employee.avatarUrl || 'image/OIP (1).png'}" alt="avatar" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%"> ${employee.salutation} ${employee.firstName} ${employee.lastName}</td>
             <td>${employee.email}</td>
             <td>${employee.phone}</td>
             <td>${employee.dob}</td>
@@ -46,7 +89,7 @@ function renderTable(data) {
             <td>${employee.country}</td>
             <td>
                 <div class="dropdown">
-                    <button class="btn btn-secondar" type="button" data-bs-toggle="dropdown">
+                    <button class="btn btn-secondary" type="button" data-bs-toggle="dropdown">
                         <span class="colo">...</span>
                     </button>
                     <ul class="dropdown-menu">
@@ -61,6 +104,19 @@ function renderTable(data) {
     });
 }
 
+// Handle rows per page change
+document.querySelectorAll(".dropdown-item").forEach(item => {
+    item.addEventListener("click", function (e) {
+        e.preventDefault();
+        rowsPerPage = parseInt(this.textContent, 10);
+        document.getElementById("row").textContent = this.textContent;
+        renderPagination(); // Re-render pagination with new rows per page
+    });
+});
+ 
+
+//////-edit-/////
+
 async function editEmployee(employeeId) {
     console.log("Editing employee with ID:", employeeId);
     try {
@@ -68,6 +124,8 @@ async function editEmployee(employeeId) {
         if (!response.ok) throw new Error("Failed to fetch employee data.");
         const employee = await response.json();
         console.log("Employee data fetched:", employee);
+        document.getElementById("read").innerHTML="Edit Employee";
+        document.getElementById("submit").innerHTML="Save Changes";
         populateForm(employee, employeeId);
     } catch (error) {
         console.error("Error fetching employee details:", error);
@@ -103,40 +161,71 @@ document.getElementById("submit").onclick = async (e) => {
     e.preventDefault();
     const formData = getFormData();
     const errors = validateForm(formData);
-    if (errors.length) {
-        alert(errors.join("\n"));
+    
+
+    if (Object.keys(errors).length > 0) {
+        displayErrors(errors); // Show validation errors in form
         return;
     }
 
     try {
         let response;
         if (isEditing) {
-            response = await fetch(`${API_BASE_URL}/${editingEmployeeId}`, {
+              response = await fetch(`${API_BASE_URL}/${editingEmployeeId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
+            // imagefetch(employeeId);
         } else {
             response = await fetch(API_BASE_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData),
             });
+            // imagefetch(employeeId);
+            const newEmployee = await response.json();
+            imagefetch(newEmployee.id);
         }
-
+        
         if (!response.ok) {
             throw new Error(`Failed to ${isEditing ? "update" : "add"} employee.`);
             
         }
+        // setTimeout(()=>{
+        // Swal.fire({
+        //     icon: 'success',
+        //     title: isEditing ? 'Employee updated successfully!' : 'Employee added successfully!',
+        //     text: 'The employee has been successfully saved.',
+        //     confirmButtonText: 'OK',
+        //     timer:null,
+        // });
+    if(isEditing){
+        localStorage.setItem('notification',  'updated');
+    }
+    else{
+        localStorage.setItem('notification',  'added');
+    }
 
-        console.log(`Employee ${isEditing ? "updated" : "added"} successfully!`);
+        console.log(`Employee ${isEditing ? "updated" : "added"} successfully! ${employeeId}`);
         fetchEmployees();
         closeForm();
+       
     } catch (error) {
         console.error(`Error ${isEditing ? "updating" : "adding"} employee:`, error);
         alert(`There was an error ${isEditing ? "updating" : "adding"} the employee. Please try again.`);
     }
 };
+if(localStorage.getItem('notification')){
+    Swal.fire({
+        icon: 'success',
+        // title: isEditing ? 'Employee updated successfully!' : 'Employee added successfully!',
+        title: `Employee ${localStorage.getItem('notification')} successfully`,
+        text: 'The employee has been successfully saved.',
+        confirmButtonText: 'OK',
+        timer:null});
+        localStorage.removeItem('notification')
+}
 
 function getFormData() {
     return {
@@ -158,23 +247,36 @@ function getFormData() {
 }
 
 function validateForm(data) {
-    const errors = [];
-    if (!data.salutation) errors.push("Salutation is required.");
-    if (!data.firstName) errors.push("First name is required.");
-    if (!data.lastName) errors.push("Last name is required.");
-    if (!validateEmail(data.email)) errors.push("Invalid email.");
-    if (!validatePhone(data.phone)) errors.push("Invalid phone number.");
-    if (!data.dob) errors.push("Date of birth is required.");
-    if (!data.gender) errors.push("Gender is required.");
-    if (!data.qualifications) errors.push("Qualifications are required.");
-    if (!data.address) errors.push("Address is required.");
-    if (!data.city) errors.push("City is required.");
-    if (!data.state) errors.push("State is required.");
-    if (!data.country) errors.push("Country is required.");
-    if (!data.username) errors.push("Username is required.");
-    if (!validatePassword(data.password)) errors.push("Password is invalid.");
+    const errors = {};
+    if (!data.salutation) errors.salutation = "Salutation is required.";
+    if (!data.firstName) errors.firstName="First name is required.";
+    if (!data.lastName) errors.lastName="Last name is required.";
+    if (!validateEmail(data.email)) errors.email="Invalid email.";
+    if (!validatePhone(data.phone)) errors.phone="Invalid phone number.";
+    if (!data.dob) errors.dob="Date of birth is required.";
+    if (!data.gender) errors.gender="Gender is required.";
+    if (!data.qualifications) errors.qualifications="Qualifications are required.";
+    if (!data.address) errors.address="Address is required.";
+    if (!data.city) errors.city="City is required.";
+    if (!data.state) errors.state="State is required.";
+    if (!data.country) errors.country="Country is required.";
+    if (!data.username) errors.username="Username is required.";
+    if (!validatePassword(data.password)) errors.password="Password is invalid.";
     return errors;
 }
+
+function displayErrors(errors) {
+    document.querySelectorAll(".error").forEach(el => el.textContent = "");
+
+    Object.keys(errors).forEach(field => {
+        const errorElement = document.getElementById(`${field}Error`);
+        if (errorElement) {
+            errorElement.textContent = errors[field];
+        }
+    });
+}
+
+
 
 function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -200,43 +302,39 @@ fetchEmployees();
 
 // Delete function
 
-function openModal() {
-    document.getElementById("modals").style.display = "block";
-}
-
-function closeModal() {
-    deleteEmployeeId = null;
-    document.getElementById("modals").style.display = "none";
-}
-
 async function deleteEmployee(employeeId) {
-    console.log("Preparing to delete employee with ID:", employeeId);
-    deleteEmployeeId = employeeId;
-    openModal(); 
-}
-
-document.getElementById("delete").onclick = async () => {
     try {
-        const response = await fetch(`${API_BASE_URL}/${deleteEmployeeId}`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
+        const result = await Swal.fire({
+            title: "Are you sure?",
+            text: "This action cannot be undone!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel!",
         });
-
-        if (response.ok) {
-            console.log(`Employee with ID ${deleteEmployeeId} deleted successfully.`);
-            alert("Employee deleted successfully.");
-            fetchEmployees();
+ 
+        if (result.isConfirmed) {
+            const response = await fetch(`${API_BASE_URL}/${employeeId}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+            });
+ 
+            if (response.ok) {
+                console.log("Deleted successfully");
+                document.getElementById("error").innerHTML = "Deleted successfully.";
+                Swal.fire("Deleted!", "The employee record has been removed.", "success");
+            } else {
+                Swal.fire("Error", "Failed to delete employee.", "error");
+            }
         } else {
-            alert("Failed to delete employee. Please try again.");
+            console.log("Deletion cancelled.");
         }
     } catch (error) {
-        console.error("Error during delete operation:", error);
-        alert("An error occurred while deleting the employee. Please try again.");
-    } finally {
-        closeModal();
+        console.error(error);
+        Swal.fire("Error", "An unexpected error occurred.", "error");
     }
-};
-
+ }
+ 
 
 /////-search-////
 
@@ -261,75 +359,34 @@ function Search(){
 
 
 
-// Pagination
 
-let rowsPerPage = 5; // Default rows per page
-const rowButton = document.getElementById("row");
-const dropdownItems = document.querySelectorAll(".dropdown-item");
+////-avatar--///
 
-dropdownItems.forEach(item => {
-    item.addEventListener("click", function (e) {
-        e.preventDefault();
-        rowsPerPage = parseInt(this.textContent, 10);
-        rowButton.textContent = this.textContent; 
-        renderPagination(data); 
-    });
-});
 
-function renderPagination(data) {
-    const pagination = document.querySelector(".pagination");
-    pagination.innerHTML = "";
-    const totalPages = Math.ceil(data.length / rowsPerPage);
 
-    if (totalPages === 0) return; 
+let profilepic=document.getElementById("uploadimage");
+let inputfile=document.getElementById("input_img");
 
-    let paginationHTML = "";
-    for (let i = 1; i <= totalPages; i++) {
-        paginationHTML += `<li class="page-item">
-            <a href="#" class="page-link ${i === 1 ? "active" : ""}" data-page="${i}">${i}</a>
-        </li>`;
-    }
-    pagination.innerHTML = paginationHTML;
-
-   
-    renderTable(data.slice(0, rowsPerPage));
-
-    pagination.addEventListener("click", (e) => {
-        if (e.target.classList.contains("page-link")) {
-            e.preventDefault();
-            document.querySelectorAll(".page-link").forEach(link => link.classList.remove("active"));
-            e.target.classList.add("active");
-
-            const pageNumber = parseInt(e.target.getAttribute("data-page"), 10);
-            renderTable(data.slice((pageNumber - 1) * rowsPerPage, pageNumber * rowsPerPage));
-        }
-    });
-    document.getElementById(display).innerHTML="20";
+inputfile.onchange=()=>{
+    profilepic.src=URL.createObjectURL(inputfile.files[0]);
 }
 
-async function uploadimage(e,employeeId) {
-    e.preventDefault();
-    const fileinput=document.getElementById("input_img");
-    const file=fileinput.file[0];
-    if(!file){
-        alert("please upload a file");
-        return;
+
+async function imagefetch(employeeId) {
+    console.log(employeeId);
+    const inputfile = document.getElementById('input-img');
+    if (inputfile.files.length > 0) {
+        const formData = new FormData();
+        formData.append("avatar", inputfile.files[0]);
+        const response = await fetch(`http://localhost:3000/employees/${employeeId}/avatars`, {
+            method: "POST",
+            body: formData,
+        });
+        const image = await response.json();
+        console.log(image);
     }
-    const formData=new formData();
-    formData.append(file);
-    try{
-        const response=await fetch(`${API_BASE_URL}/${employeeId}/avatars`,{
-             method:"POST",
-             headers:{
-                "content-type":"application/json"
-             },
-             body:formData
-        })
-        const data=response.json();
-        console.log("upload success fully",data);
-    }catch{
-        console.error(error);
-        alert("fail to fetch file"); 
-    }
-    document.getElementById("submit").addEventListener("click",uploadimage);
 }
+
+
+
+
